@@ -1,0 +1,165 @@
+{% extends 'public/base.html' %}
+
+{% block title %}My Portfolio - Contact{% endblock %}
+
+{% block content %}
+<!-- Contact Hero Section -->
+<section class="hero-gradient text-white py-10">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold mb-4">Get In Touch</h1>
+        <p class="text-xl mb-2 text-gray-100">Let's discuss your project or opportunities</p>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="bg-gray-50 rounded-lg shadow-md overflow-hidden">
+            <div class="flex flex-col md:flex-row">
+                <!-- Contact Info -->
+                <div class="bg-indigo-700 text-white p-8 md:w-2/5 overflow-y-auto">
+                    <h3 class="text-2xl font-bold mb-6">Contact Information</h3>
+                    
+                    <div class="mb-6">
+                        <p class="flex items-center mb-2">
+                            <i class="fas fa-envelope mr-3"></i>
+                            <a href="mailto:hello@example.com" class="hover:text-indigo-200 transition">nguthirukariuki@outlook.com</a>
+                        </p>
+                        <p class="flex items-center mb-2">
+                            <i class="fas fa-phone mr-3"></i>
+                            <a href="tel:+1234567890" class="hover:text-indigo-200 transition">+254 (705) 720-712</a>
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-3"></i>
+                            <span>Westlands - Nairobi, KE</span>
+                        </p>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Connect With Me</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/DevopsnguthiruK" class="text-white hover:text-indigo-200 transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/nguthiru-kariuki-a0585b24a/" class="text-white hover:text-indigo-200 transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="https://x.com/LucasScott54" class="text-white hover:text-indigo-200 transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="p-8 md:w-3/5">
+                    <h3 class="text-2xl font-bold mb-6 text-gray-800">Send Me a Message</h3>
+                    
+                    <form action="{{ url_for('contact') }}" method="POST">
+                        <div class="mb-4">
+                            <label for="name" class="block text-gray-700 mb-2">Your Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="email" class="block text-gray-700 mb-2">Your Email</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="subject" class="block text-gray-700 mb-2">Subject</label>
+                            <input type="text" id="subject" name="subject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black" required>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="message" class="block text-gray-700 mb-2">Your Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition w-full md:w-auto">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <h2 class="text-3xl font-bold mb-8 text-center text-gray-900">Frequently Asked Questions</h2>
+        
+        <div class="space-y-6">
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">What services do you offer?</h3>
+                <p class="text-black">I offer web development, UX/UI design, and digital strategy services. This includes full-stack development, responsive design, user experience research, and more.</p>
+            </div>
+            
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">What is your typical turnaround time?</h3>
+                <p class="text-black">Project timelines vary based on scope and complexity. Small projects typically take 2-4 weeks, while larger projects may take 2-3 months. I'll provide a detailed timeline in my proposal.</p>
+            </div>
+            
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Do you offer ongoing maintenance?</h3>
+                <p class="text-black">Yes, I offer website maintenance and support packages to ensure your site remains secure, up-to-date, and performing optimally after launch.</p>
+            </div>
+            
+            <div class="bg-gray-50 p-6 rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">How do we get started on a project?</h3>
+                <p class="text-black">After you contact me, we'll schedule a consultation to discuss your needs. I'll then provide a proposal outlining scope, timeline, and cost. Once approved, we'll begin the development process.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Availability Section -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 text-center max-w-3xl">
+        <h2 class="text-3xl font-bold mb-4 text-gray-900">Current Availability</h2>
+        <p class="text-gray-600 mb-8">I'm currently accepting new projects starting <span class="font-semibold text-indigo-600">April 2025</span>. Get in touch to reserve your spot.</p>
+        
+        <div class="bg-indigo-50 p-6 rounded-lg">
+            <p class="text-gray-700 text-lg">For urgent requests or small projects, I may be able to accommodate a faster timeline. Please mention your timeframe in your message.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        const name = form.querySelector('#name').value;
+        const email = form.querySelector('#email').value;
+        const subject = form.querySelector('#subject').value;
+        const message = form.querySelector('#message').value;
+
+        if (!name || !email || !subject || !message) {
+            e.preventDefault();
+            alert('Please fill in all fields');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address');
+            return;
+        }
+    });
+});  
+</script>
+{% endblock %}

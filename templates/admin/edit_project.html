@@ -1,0 +1,133 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+{% if project %}Edit Project{% else %}Add Project{% endif %} - Portfolio Admin
+{% endblock %}
+
+{% block header %}
+{% if project %}Edit Project{% else %}Add New Project{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Title -->
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Project Title *</label>
+                <input type="text" name="title" id="title" required
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                       value="{{ project.title if project else '' }}">
+            </div>
+            
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description *</label>
+                <textarea name="description" id="description" rows="5" required
+                          class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ project.description if project else '' }}</textarea>
+            </div>
+            
+            <!-- Client -->
+            <div>
+                <label for="client" class="block text-sm font-medium text-gray-700">Client</label>
+                <input type="text" name="client" id="client"
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                       value="{{ project.client if project else '' }}">
+            </div>
+            
+            <!-- Category -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                <input type="text" name="category" id="category"
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                       value="{{ project.category if project else '' }}">
+            </div>
+            
+            <!-- Location -->
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700">Location</label>
+                <input type="text" name="location" id="location"
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                       value="{{ project.location if project else '' }}">
+            </div>
+            
+            <!-- Technologies -->
+            <div>
+                <label for="technologies" class="block text-sm font-medium text-gray-700">Technologies</label>
+                <textarea name="technologies" id="technologies" rows="3"
+                          class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ project.technologies if project else '' }}</textarea>
+                <p class="text-xs text-gray-500 mt-1">List technologies used, separated by commas</p>
+            </div>
+            
+            <!-- Challenges -->
+            <div>
+                <label for="challenges" class="block text-sm font-medium text-gray-700">Challenges</label>
+                <textarea name="challenges" id="challenges" rows="3"
+                          class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ project.challenges if project else '' }}</textarea>
+            </div>
+            
+            <!-- Solution -->
+            <div>
+                <label for="solution" class="block text-sm font-medium text-gray-700">Solution</label>
+                <textarea name="solution" id="solution" rows="3"
+                          class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">{{ project.solution if project else '' }}</textarea>
+            </div>
+            
+            <!-- Repository -->
+            <div>
+                <label for="repository" class="block text-sm font-medium text-gray-700">Repository URL</label>
+                <input type="url" name="repository" id="repository"
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                       value="{{ project.repository if project else '' }}">
+                <p class="text-xs text-gray-500 mt-1">Link to GitHub, GitLab, or other repository</p>
+            </div>
+            
+            <!-- Dates -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" name="start_date" id="start_date"
+                           class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                           value="{{ project.start_date.strftime('%Y-%m-%d') if project and project.start_date else '' }}">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                    <input type="date" name="end_date" id="end_date"
+                           class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                           value="{{ project.end_date.strftime('%Y-%m-%d') if project and project.end_date else '' }}">
+                </div>
+            </div>
+            
+            <!-- Image -->
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700">Project Image</label>
+                {% if project and project.image %}
+                <div class="mt-2 mb-2">
+                    <img src="{{ url_for('static', filename=project.image) }}" alt="{{ project.title }}" class="h-32 w-auto object-cover rounded">
+                    <p class="text-xs text-gray-500 mt-1">Current image. Upload a new one to replace it.</p>
+                </div>
+                {% endif %}
+                <input type="file" name="image" id="image" accept="image/*"
+                       class="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="flex justify-end pt-4">
+                <a href="{{ url_for('admin_projects') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded mr-2">Cancel</a>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    {% if project %}Update Project{% else %}Create Project{% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // No special scripts needed for this form
+    document.addEventListener('DOMContentLoaded', function() {
+        // Any initialization code can go here
+    });
+</script>
+{% endblock %}

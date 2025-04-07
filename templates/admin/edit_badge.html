@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+
+{% block title %}
+{% if badge %}Edit Badge{% else %}Add Badge{% endif %} - Portfolio Admin
+{% endblock %}
+
+{% block header %}
+{% if badge %}Edit Badge{% else %}Add New Badge{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Form Container -->
+<div class="bg-white rounded-lg shadow p-6">
+    <form method="POST" enctype="multipart/form-data">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Title -->
+            <div class="col-span-2">
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Badge Title *</label>
+                <input type="text" name="title" id="title" required
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    value="{{ badge.title if badge else '' }}">
+            </div>
+
+            <!-- Issuer -->
+            <div>
+                <label for="issuer" class="block text-sm font-medium text-gray-700 mb-1">Issuer *</label>
+                <input type="text" name="issuer" id="issuer" required
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    value="{{ badge.issuer if badge else '' }}">
+            </div>
+
+            <!-- Earned Date -->
+            <div>
+                <label for="earned_date" class="block text-sm font-medium text-gray-700 mb-1">Earned Date</label>
+                <input type="date" name="earned_date" id="earned_date"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    value="{{ badge.earned_date.strftime('%Y-%m-%d') if badge and badge.earned_date else '' }}">
+            </div>
+            
+            <!-- URL -->
+            <div class="col-span-2">
+                <label for="url" class="block text-sm font-medium text-gray-700 mb-1">Certificate URL</label>
+                <input type="url" name="url" id="url"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    value="{{ badge.url if badge else '' }}"
+                    placeholder="https://example.com/certificate">
+                <p class="mt-1 text-sm text-gray-500">Link to view the certificate or verification page</p>
+            </div>
+
+            <!-- Badge Image -->
+            <div class="col-span-2">
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Badge Image</label>
+                
+                {% if badge and badge.image %}
+                <div class="mb-2">
+                    <div class="flex items-center mt-1">
+                        <img src="{{ url_for('static', filename=badge.image) }}" alt="{{ badge.title }}" 
+                             class="h-16 w-16 object-cover rounded border border-gray-200">
+                        <span class="ml-2 text-sm text-gray-500">Current image</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <input type="file" name="image" id="image" accept="image/*"
+                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0 file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                <p class="mt-1 text-sm text-gray-500">Upload a square image for best results</p>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="mt-6 flex items-center justify-end space-x-3">
+            <a href="{{ url_for('admin_badges') }}" 
+                class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Cancel
+            </a>
+            <button type="submit" 
+                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                {% if badge %}Update Badge{% else %}Save Badge{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

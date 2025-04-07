@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Portfolio{% endblock %}</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Three.js for 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        /* Custom styles that extend Tailwind */
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #5eead4;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .3d-card {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+            perspective: 1000px;
+        }
+        
+        .3d-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+        
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .cursor-glow {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(94, 234, 212, 0.5);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-900 text-gray-100 flex flex-col min-h-screen">
+    <div id="canvas-container"></div>
+    <div class="cursor-glow hidden md:block"></div>
+    
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="{{ url_for('index') }}" class="text-2xl font-bold text-teal-300 flex items-center">
+                    <span class="mr-2">&#9672;</span>MyPortfolio
+                </a>
+                <div class="hidden md:flex space-x-8 absolute right-5">
+                    <a href="{{ url_for('index') }}" class="nav-link text-gray-100 hover:text-teal-300 transition-colors">Home</a>
+                    <a href="{{ url_for('projects') }}" class="nav-link text-gray-100 hover:text-teal-300 transition-colors">Projects</a>
+                    <a href="{{ url_for('contact') }}" class="nav-link text-gray-100 hover:text-teal-300 transition-colors">Contact</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-100 hover:text-teal-300 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile menu, hidden by default -->
+            <div id="mobile-menu" class="md:hidden hidden py-2 mt-4">
+                <a href="{{ url_for('index') }}" class="block py-2 px-4 text-gray-100 hover:text-teal-300">Home</a>
+                <a href="{{ url_for('projects') }}" class="block py-2 px-4 text-gray-100 hover:text-teal-300">Projects</a>
+                <a href="{{ url_for('contact') }}" class="block py-2 px-4 text-gray-100 hover:text-teal-300">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash messages -->
+    <div class="pt-24">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="container mx-auto px-4">
+                        <div class="bg-{{ 'green' if category == 'success' else 'red' }}-900 bg-opacity-50 text-{{ 'green' if category == 'success' else 'red' }}-300 p-4 mb-4 rounded-lg backdrop-blur-sm">
+                            {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 bg-opacity-70 backdrop-blur-md">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-2xl font-bold text-teal-300 flex items-center">
+                        <span class="mr-2">&#9672;</span>MyPortfolio
+                    </p>
+                    <p class="text-gray-400 mt-2">Crafting digital experiences</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://github.com/DevopsnguthiruK" class="text-gray-400 hover:text-teal-300 transition transform hover:scale-110">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/nguthiru-kariuki-a0585b24a/" class="text-gray-400 hover:text-teal-300 transition transform hover:scale-110">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="https://x.com/LucasScott54" class="text-gray-400 hover:text-teal-300 transition transform hover:scale-110">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; {{ now.year }} MyPortfolio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            menuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Sticky navigation
+            const nav = document.querySelector('nav');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 100) {
+                    nav.classList.add('bg-slate-900', 'bg-opacity-90');
+                    nav.classList.remove('glass-nav');
+                } else {
+                    nav.classList.add('glass-nav');
+                    nav.classList.remove('bg-slate-900', 'bg-opacity-90');
+                }
+            });
+            
+            // Initialize Three.js background
+            initThreeJsBackground();
+            
+            // Custom cursor effect
+            const cursor = document.querySelector('.cursor-glow');
+            if (cursor) {
+                document.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
+                
+                document.querySelectorAll('a, button').forEach(item => {
+                    item.addEventListener('mouseenter', () => {
+                        cursor.style.width = '50px';
+                        cursor.style.height = '50px';
+                    });
+                    
+                    item.addEventListener('mouseleave', () => {
+                        cursor.style.width = '20px';
+                        cursor.style.height = '20px';
+                    });
+                });
+            }
+        });
+        
+        // Three.js background
+        function initThreeJsBackground() {
+            const container = document.getElementById('canvas-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // Create scene, camera, and renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 1500;
+            
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 5;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.005,
+                color: 0x5eead4,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            camera.position.z = 3;
+            
+            // Mouse movement effect
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = event.clientX / width - 0.5;
+                mouseY = event.clientY / height - 0.5;
+            });
+            
+            // Animation loop
+            const animate = () => {
+                requestAnimationFrame(animate);
+                
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += 0.001;
+                
+                // Follow mouse
+                camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.05;
+                
+                renderer.render(scene, camera);
+            };
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                const newWidth = container.clientWidth;
+                const newHeight = container.clientHeight;
+                
+                camera.aspect = newWidth / newHeight;
+                camera.updateProjectionMatrix();
+                
+                renderer.setSize(newWidth, newHeight);
+            });
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

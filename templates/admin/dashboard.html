@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard - Portfolio Admin{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="rounded-full bg-blue-100 p-3">
+                <i class="fas fa-eye text-blue-500"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold">Total Visits</h3>
+                <p class="text-2xl font-bold">{{ total_visits }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="rounded-full bg-green-100 p-3">
+                <i class="fas fa-project-diagram text-green-500"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold">Projects</h3>
+                <p class="text-2xl font-bold">{{ projects|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="rounded-full bg-purple-100 p-3">
+                <i class="fas fa-comment text-purple-500"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold">Testimonials</h3>
+                <p class="text-2xl font-bold">{{ testimonials|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+            <div class="rounded-full bg-yellow-100 p-3">
+                <i class="fas fa-medal text-yellow-500"></i>
+            </div>
+            <div class="ml-4">
+                <h3 class="text-lg font-semibold">Badges</h3>
+                <p class="text-2xl font-bold">{{ badges|length }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Page Visit Analytics -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-semibold mb-4">Page Visit Analytics</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-4 text-left font-medium">Page</th>
+                        <th class="py-3 px-4 text-left font-medium">Visits</th>
+                        <th class="py-3 px-4 text-left font-medium">Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page, count in page_stats %}
+                    <tr class="border-t">
+                        <td class="py-3 px-4">{{ page }}</td>
+                        <td class="py-3 px-4">{{ count }}</td>
+                        <td class="py-3 px-4">
+                            {{ (count / total_visits * 100)|round(1) }}%
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: {{ (count / total_visits * 100)|round(1) }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Projects -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">Recent Projects</h2>
+            <a href="{{ url_for('admin_projects') }}" class="text-blue-500 hover:underline">View All</a>
+        </div>
+        <div class="space-y-4">
+            {% for project in projects %}
+            <div class="flex items-center border-b pb-3">
+                {% if project.image %}
+                <img src="{{ url_for('static', filename=project.image) }}" alt="{{ project.title }}" class="w-12 h-12 object-cover rounded">
+                {% else %}
+                <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                    <i class="fas fa-project-diagram text-gray-400"></i>
+                </div>
+                {% endif %}
+                <div class="ml-4 flex-1">
+                    <h3 class="font-medium">{{ project.title }}</h3>
+                    <div class="text-sm text-gray-500">Progress: {{ project.progress }}%</div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                        <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ project.progress }}%"></div>
+                    </div>
+                </div>
+                <a href="{{ url_for('edit_project', id=project.id) }}" class="text-blue-500 hover:text-blue-700">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
